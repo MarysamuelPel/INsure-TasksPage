@@ -280,6 +280,11 @@
             <input type="file" id="avatar-upload" accept="image/*" style="display: none;" onchange="updateAvatar(this)">
             <a href="#" class="text-blue-500 hover:underline font-regular text-xs" onclick="editUserName()">Edit Name</a>
         </div>
+        <div id="notification" class="absolute top-0 right-0 mt-4 mr-4 p-2 
+        rounded text-white bg-green-500" style="display: none;">
+            <!-- Initial content is empty -->
+        </div>
+        
     
       </div>
         <!-- Team Section -->
@@ -293,13 +298,13 @@
                 <div class="flex space-x-1">
                     <img src="./Images/anonymous-avatar-icon-25.jpg" alt="Circle 1" 
                     class="w-10 h-10 rounded-full">
-                    <img src="./Images/anonymous-avatar-icon-25.jpg" alt="Circle 1" 
+                    <img src="./Images/anonymous-avatar-icon-25.jpg" alt="Circle 2" 
                     class="w-10 h-10 rounded-full">
-                    <img src="./Images/anonymous-avatar-icon-25.jpg" alt="Circle 1" 
+                    <img src="./Images/anonymous-avatar-icon-25.jpg" alt="Circle 3" 
                     class="w-10 h-10 rounded-full">
-                    <img src="./Images/anonymous-avatar-icon-25.jpg" alt="Circle 1" 
+                    <img src="./Images/anonymous-avatar-icon-25.jpg" alt="Circle 4" 
                     class="w-10 h-10 rounded-full">
-                    <img src="./Images/anonymous-avatar-icon-25.jpg" alt="Circle 1" 
+                    <img src="./Images/anonymous-avatar-icon-25.jpg" alt="Circle 5" 
                     class="w-10 h-10 rounded-full">
                     
                 </div>
@@ -385,108 +390,147 @@
 
 <!-- Javascript Component of Page -->
 <script>
-    let taskIdCounter = 1;
+// Function to add a new task
+let taskIdCounter = 1;
 
-    function addTask() {
-        // Created a new task element
-        const taskContainer = document.getElementById("task-container");
-        const taskElement = document.createElement("div");
-        taskElement.className = "bg-gray-100 p-4 rounded-lg flex items-center space-x-4 shadow-md";
-        taskElement.id = `task-${taskIdCounter}`;
+function addTask() {
+    // Create a new task element
+    const taskContainer = document.getElementById("task-container");
+    const taskElement = document.createElement("div");
+    taskElement.className = "bg-gray-100 p-4 rounded-lg flex items-center space-x-4 shadow-md";
+    taskElement.id = `task-${taskIdCounter}`;
 
-        // Created task content
-        taskElement.innerHTML = `
-            <i class="fa-solid fa-diagram-project text-blue-500"></i>
-            <div class="flex-grow">
-                <p class="font-semibold">New Task ${taskIdCounter}</p>
-                <p class="text-sm">Description of the new task</p>
-            </div>
-            <i class="fa-solid fa-circle text-blue-500"></i>
-            <i class="fa-solid fa-circle text-green-500"></i>
-            <i class="fa-solid fa-circle text-purple-500"></i>
-            <i class="fa-solid fa-circle text-orange-500"></i>
-            <div>
-                <p class="font-semibold">Progress</p>
-                <p class="text-sm text-blue-500 font-semibold">0%</p>
-            </div>
-            <button class="bg-red-500 text-white rounded-full py-2 px-4 hover:bg-red-600 font-semibold"
-                    onclick="confirmRemoveTask(${taskIdCounter})">Remove</button>
-            <button class="bg-blue-500 text-white rounded-full py-2 px-4 hover:bg-blue-600 font-semibold"
-                    onclick="editTask(${taskIdCounter})">Edit</button>
-        `;
+    // Create task content
+    taskElement.innerHTML = `
+        <i class="fa-solid fa-diagram-project text-blue-500"></i>
+        <div class="flex-grow">
+            <p class="font-semibold">New Task ${taskIdCounter}</p>
+            <p class="text-sm">Description of the new task</p>
+        </div>
+        <i class="fa-solid fa-circle text-blue-500"></i>
+        <i class "fa-solid fa-circle text-green-500"></i>
+        <i class="fa-solid fa-circle text-purple-500"></i>
+        <i class="fa-solid fa-circle text-orange-500"></i>
+        <div>
+            <p class="font-semibold">Progress</p>
+            <p class="text-sm text-blue-500 font-semibold">0%</p>
+        </div>
+        <button class="bg-red-500 text-white rounded-full py-2 px-4 hover-bg-red-600 font-semibold"
+                onclick="removeTask(${taskIdCounter})">Remove</button>
+        <button class="bg-blue-500 text-white rounded-full py-2 px-4 hover-bg-blue-600 font-semibold"
+                onclick="editTask(${taskIdCounter})">Edit</button>
+    `;
 
-        // Append the new task to the container
-        taskContainer.appendChild(taskElement);
+    // Append the new task to the container
+    taskContainer.appendChild(taskElement);
 
-        // Increment the task ID counter
-        taskIdCounter++;
-    }
+    // Increment the task ID counter
+    taskIdCounter++;
+}
 
-    function confirmRemoveTask(taskId) {
-        const confirmRemove = confirm("Are you sure you want to remove this task?");
-        if (confirmRemove) {
-            removeTask(taskId);
+// Function to remove a task
+function removeTask(taskId) {
+    const taskElement = document.getElementById(`task-${taskId}`);
+    taskElement.remove();
+}
+
+// Function to edit a task name and description in-place
+function editTask(taskId) {
+    const taskElement = document.getElementById(`task-${taskId}`);
+    const taskContentElement = taskElement.querySelector(".flex-grow");
+
+    // Create input fields for editing
+    const taskNameInput = document.createElement("input");
+    taskNameInput.type = "text";
+    taskNameInput.value = taskContentElement.querySelector("p.font-semibold").textContent;
+
+    const taskDescriptionInput = document.createElement("input");
+    taskDescriptionInput.type = "text";
+    taskDescriptionInput.value = taskContentElement.querySelector("p.text-sm").textContent;
+
+    // Add input fields to the task content
+    taskContentElement.querySelector("p.font-semibold").textContent = "";
+    taskContentElement.querySelector("p.text-sm").textContent = "";
+    taskContentElement.appendChild(taskNameInput);
+    taskContentElement.appendChild(taskDescriptionInput);
+
+    // Add event listeners for saving changes
+    taskNameInput.addEventListener("blur", function () {
+        taskContentElement.querySelector("p.font-semibold").textContent = taskNameInput.value;
+        taskNameInput.remove();
+    });
+
+    taskDescriptionInput.addEventListener("blur", function () {
+        taskContentElement.querySelector("p.text-sm").textContent = taskDescriptionInput.value;
+        taskDescriptionInput.remove();
+    });
+
+    taskNameInput.focus();
+}
+
+
+// Function to edit the user's name directly
+function editUserName() {
+    const currentNameElement = document.getElementById("user-name");
+    const newNameInput = document.createElement("input");
+    newNameInput.type = "text";
+    newNameInput.value = currentNameElement.textContent;
+    newNameInput.classList.add("border", "border-gray-300", "rounded");
+    newNameInput.style.width = "80%";
+
+    newNameInput.addEventListener("keyup", function (event) {
+        if (event.key === "Enter") {
+            currentNameElement.textContent = newNameInput.value;
+            newNameInput.remove();
+        } else if (event.key === "Escape") {
+            newNameInput.remove();
         }
+    });
+
+    currentNameElement.textContent = "";
+    currentNameElement.appendChild(newNameInput);
+    newNameInput.focus();
+}
+
+// Function to edit the user's profile picture directly
+function updateAvatar(input) {
+    const file = input.files[0];
+    const notification = document.getElementById("notification");
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            // Update the user's avatar with the selected image
+            const userAvatar = document.getElementById("user-avatar");
+            userAvatar.setAttribute("src", e.target.result);
+
+            // Show a success message in the notification
+            notification.textContent = "Profile picture updated successfully!";
+            notification.classList.remove("bg-red-500");
+            notification.classList.add("bg-green-500");
+            notification.style.display = "block";
+
+            // Hide the notification after a few seconds (e.g., 3 seconds)
+            setTimeout(function () {
+                notification.style.display = "none";
+            }, 3000);
+        };
+        reader.readAsDataURL(file);
+    } else {
+        // Show a failure message in the notification
+        notification.textContent = "Failed to update profile picture.";
+        notification.classList.remove("bg-green-500");
+        notification.classList.add("bg-red-500");
+        notification.style.display = "block";
+
+     setTimeout(function () {
+                notification.style.display = "none";
+            }, 3000);
     }
+}
 
-    function removeTask(taskId) {
-        const taskElement = document.getElementById(`task-${taskId}`);
-        taskElement.remove();
-    }
 
-    function editTask(taskId) {
-        const taskElement = document.getElementById(`task-${taskId}`);
-        const taskContentElement = taskElement.querySelector(".flex-grow");
-
-        // Prompt the user to edit the task's content
-        const newTaskName = prompt("Edit Task Name:", taskContentElement.querySelector("p.font-semibold").textContent);
-        const newTaskDescription = prompt("Edit Task Description:", taskContentElement.querySelector("p.text-sm").textContent);
-
-        if (newTaskName !== null && newTaskDescription !== null) {
-            // Update the task content with the new values
-            taskContentElement.querySelector("p.font-semibold").textContent = newTaskName;
-            taskContentElement.querySelector("p.text-sm").textContent = newTaskDescription;
-        }
-    }
-
-    //editing user info(2nd javascript function)
-    function updateAvatar(input) {
-        const file = input.files[0];
-
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                // Update the user's avatar with the selected image
-                const userAvatar = document.getElementById("user-avatar");
-                userAvatar.setAttribute("src", e.target.result);
-
-                // Show a success message
-                alert("Agent Profile picture updated successfully!");
-            };
-            reader.readAsDataURL(file);
-        } else {
-            // Show a failure message
-            alert("Failed to update profile picture.");
-        }
-    }
-
-    function editUserName() {
-        const currentName = document.getElementById("user-name").textContent;
-        const newName = prompt("Edit Your Name:", currentName);
-
-        if (newName !== null) {
-            // Update the user's name
-            document.getElementById("user-name").textContent = newName;
-
-            // Show a success message
-            alert("Agent name updated successfully!");
-        } else {
-            // Show a failure message
-            alert("Failed to update name.");
-        }
-    }
-    
-/// Function to update the calendar (3rd javascript function)
+// Function to update the calendar (3rd javascript function)
 function updateCalendar() {
     const currentWeekElement = document.getElementById("current-week");
     const calendarDaysElement = document.getElementById("calendar-days");
@@ -501,7 +545,7 @@ function updateCalendar() {
         currentWeek.push(daysOfWeek[dayIndex]);
     }
 
-    currentWeekElement.textContent = `${new Intl.DateTimeFormat('en-NG', 
+    currentWeekElement.textContent = `${new Intl.DateTimeFormat('en-NG',
     { month: 'long', day: 'numeric',  year: 'numeric' }).format(currentDate)}`;
 
     // Clear existing calendar days
@@ -530,7 +574,6 @@ function updateCalendar() {
 
 // Call the updateCalendar function to initialize the calendar
 updateCalendar();
-
 </script>
 
 
