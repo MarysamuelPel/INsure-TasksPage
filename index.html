@@ -426,6 +426,26 @@ function addTask() {
 
     // Increment the task ID counter
     taskIdCounter++;
+
+    // Save task information to local storage
+    saveTasksToLocalStorage();
+}
+// Function to save tasks to local storage
+function saveTasksToLocalStorage() {
+    const tasks = [];
+    const taskElements = document.querySelectorAll(".bg-gray-100");
+    taskElements.forEach((taskElement, index) => {
+        const taskName = taskElement.querySelector("p.font-semibold").textContent;
+        const taskDescription = taskElement.querySelector("p.text-sm").textContent;
+
+        tasks.push({
+            id: index + 1,
+            name: taskName,
+            description: taskDescription,
+        });
+    });
+
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
 // Function to remove a task
@@ -467,7 +487,6 @@ function editTask(taskId) {
 
     taskNameInput.focus();
 }
-
 
 // Function to edit the user's name directly
 function editUserName() {
@@ -529,12 +548,22 @@ function updateAvatar(input) {
     }
 }
 
+//code for calender
 
-// Function to update the calendar (3rd javascript function)
 function updateCalendar() {
     const currentWeekElement = document.getElementById("current-week");
     const calendarDaysElement = document.getElementById("calendar-days");
-    const currentDate = new Date(new Date().toLocaleString("en-US", { timeZone: "Africa/Lagos" }));
+
+    // Check if there is a stored date in local storage
+    let currentDate;
+    const storedDate = localStorage.getItem("currentDate");
+
+    if (storedDate) {
+        currentDate = new Date(storedDate);
+    } else {
+        currentDate = new Date(new Date().toLocaleString("en-US", { timeZone: "Africa/Lagos" }));
+    }
+
     const currentDay = currentDate.getDay();
     const daysOfWeek = ["S", "M", "T", "W", "T", "F", "S"];
 
@@ -546,7 +575,10 @@ function updateCalendar() {
     }
 
     currentWeekElement.textContent = `${new Intl.DateTimeFormat('en-NG',
-    { month: 'long', day: 'numeric',  year: 'numeric' }).format(currentDate)}`;
+        { month: 'long', day: 'numeric', year: 'numeric' }).format(currentDate)}`;
+
+    // Store the current date in local storage
+    localStorage.setItem("currentDate", currentDate);
 
     // Clear existing calendar days
     calendarDaysElement.innerHTML = "";
@@ -574,6 +606,7 @@ function updateCalendar() {
 
 // Call the updateCalendar function to initialize the calendar
 updateCalendar();
+
 </script>
 
 
