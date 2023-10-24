@@ -390,7 +390,6 @@
 
 <!-- Javascript Component of Page -->
 <script>
-// Function to add a new task
 let taskIdCounter = 1;
 
 function addTask() {
@@ -399,6 +398,9 @@ function addTask() {
     const taskElement = document.createElement("div");
     taskElement.className = "bg-gray-100 p-4 rounded-lg flex items-center space-x-4 shadow-md";
     taskElement.id = `task-${taskIdCounter}`;
+
+    // Get the current date and time as the task creation date
+    const taskCreationDate = new Date();
 
     // Create task content
     taskElement.innerHTML = `
@@ -428,11 +430,12 @@ function addTask() {
     taskIdCounter++;
 
     // Save task information to local storage
-    saveTasksToLocalStorage();
+    saveTasksToLocalStorage(taskCreationDate);
 }
+
 // Function to save tasks to local storage
-function saveTasksToLocalStorage() {
-    const tasks = [];
+function saveTasksToLocalStorage(creationDate) {
+    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
     const taskElements = document.querySelectorAll(".bg-gray-100");
     taskElements.forEach((taskElement, index) => {
         const taskName = taskElement.querySelector("p.font-semibold").textContent;
@@ -442,6 +445,7 @@ function saveTasksToLocalStorage() {
             id: index + 1,
             name: taskName,
             description: taskDescription,
+            creationDate: creationDate,
         });
     });
 
@@ -529,7 +533,7 @@ function updateAvatar(input) {
             notification.classList.add("bg-green-500");
             notification.style.display = "block";
 
-            // Hide the notification after a few seconds (e.g., 3 seconds)
+            // Hide the notification after a few seconds (3 seconds)
             setTimeout(function () {
                 notification.style.display = "none";
             }, 3000);
@@ -542,14 +546,13 @@ function updateAvatar(input) {
         notification.classList.add("bg-red-500");
         notification.style.display = "block";
 
-     setTimeout(function () {
-                notification.style.display = "none";
-            }, 3000);
+        setTimeout(function () {
+            notification.style.display = "none";
+        }, 3000);
     }
 }
 
-//code for calender
-
+// Function to update the calendar
 function updateCalendar() {
     const currentWeekElement = document.getElementById("current-week");
     const calendarDaysElement = document.getElementById("calendar-days");
@@ -606,6 +609,7 @@ function updateCalendar() {
 
 // Call the updateCalendar function to initialize the calendar
 updateCalendar();
+
 
 </script>
 
